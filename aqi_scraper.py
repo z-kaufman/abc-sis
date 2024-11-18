@@ -1,0 +1,136 @@
+import csv
+import json
+from datetime import datetime
+
+import httpx
+from bs4 import BeautifulSoup
+
+data_type = 'list'
+
+
+def get_robots_txt(url):
+    robots_url = f"{url}/robots.txt"
+    headers = {'User-Agent': 'NREL research'}
+    response = httpx.get(robots_url, headers=headers)
+    if response.status_code == 404:  # noqa: PLR2004
+        return None
+    elif response.status_code == 200:  # noqa: PLR2004
+        return response.text
+    else:
+        return SystemExit(response)
+
+
+def scrape_website(url: str, data_type: str) -> list | str:
+    get_robots_txt(url)
+    headers = {'User-Agent': 'NREL research'}
+    # Send a GET request to the URL
+    response = httpx.get(url, headers=headers)
+
+    # Create a BeautifulSoup object to parse the HTML content
+    soup = BeautifulSoup(response.content, 'html.parser')
+
+    if data_type == 'list':
+        data = find_substring_and_context(soup.get_text(), 'PollutantsConcentration')
+
+        if data is not None:
+            data = data.split("✓")[0]
+            data_as_list = data.split()
+            data_as_list = [x.split("!")[0] for x in data_as_list[1:]]
+        else:
+            raise SystemExit("No text returned from website")
+        return data_as_list
+    elif data_type == 'raw':
+        data = soup.get_text()
+        return data
+    else:
+        raise SystemExit("Incorrect or no desired data type provided. Must be either 'raw' or 'list'.")
+
+    # Extract data using Beautiful Soup methods
+    # Example: Find all paragraph tags
+    # tables = soup.find_all('table', class_='aqi-overview-detail__main-pollution-table')
+    # data = soup.prettify()
+    # text = soup.get_text()
+    # pm_25 = soup.find_all('PollutantsConcentration')
+    # print(pm_25)
+    # raise SystemExit()
+    # print(soup.prettify())
+
+    # Process and store the extracted data
+    # data = [p.text for p in paragraphs]
+    # data = [table.text for table in tables]
+    # print(data)
+
+    # return data_as_list
+
+
+def find_substring_and_context(long_string: str, substring: str, context_length: int = 92) -> str | None:
+    """This is suuuuuuuper hacky and brittle! However, IQAir has not let us use their API for research purposes,
+    so we are scraping their website like this as a workaround.
+
+    This function reads a string, finds a substring within it, and returns it and an arbitrary number of additional
+    characters. That's the only way we're grabbing the data. If they rearrange their website, this will break.
+    """
+    # Find the starting index of the substring
+    start_index = long_string.find(substring)
+
+    # If the substring is not found, return None
+    if start_index == -1:
+        return None
+
+    # Calculate the end index for the context
+    end_index = start_index + len(substring) + context_length
+
+    # Ensure the end index doesn't exceed the string length
+    end_index = min(end_index, len(long_string))
+
+    # Extract the substring and its context
+    result = long_string[start_index:end_index]
+
+    return result
+
+
+def save_to_csv(data, filename):
+    with open(filename, 'w', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerows(data)
+
+
+def save_to_json(data, filename):
+    with open(filename, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+
+def save_to_txt(data, filename):
+    with open(filename, 'w') as f:
+        f.write(data)
+
+
+def save_list_to_csv(input_list, output_file):
+    # Ensure the list has an even number of elements
+    if len(input_list) % 2 != 0:
+        input_list.append("")  # Add an empty string if odd number of elements
+
+    # Pair the elements
+    paired_data = list(zip(input_list[0::2], input_list[1::2]))
+
+    # Write to CSV
+    with open(output_file, 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(["Pollutant", "Concentration"])  # Write header
+        writer.writerows(paired_data)
+
+
+# URL of the website you want to scrape
+url = "https://www.iqair.com/us/usa/utah/salt-lake-city"
+
+# Call the scraping function
+scraped_data = scrape_website(url, data_type)
+
+# After scraping
+if data_type == 'raw':
+    save_to_txt(scraped_data, f"test_text_{datetime.now()}.txt")
+# save_to_csv(scraped_data, f"aqi_{datetime.now()}.csv")
+# save_to_json(scraped_data, 'first_test.json')
+# save_to_csv(scraped_data, 'string_test.txt')
+elif data_type == 'list':
+    save_list_to_csv(scraped_data, f"test_list_{datetime.now()}.csv")
