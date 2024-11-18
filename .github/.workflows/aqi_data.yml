@@ -1,0 +1,25 @@
+name: Get AQI data
+
+on:
+  workflow_dispatch:
+  schedule:
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    # Run at minute 2 of every hour of every day
+    - cron: "2 * * * *"
+jobs:
+  build:
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Use specific version of Uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.5.2"
+      - name: Run the script
+        run: |
+          uv run aqi_scraper.py
