@@ -23,3 +23,9 @@ jobs:
       - name: Run the script
         run: |
           uv run aqi_scraper.py
+      - name: Upload data file
+        uses: actions/upload-artifact@v3
+        with:
+          name: AQI-data
+          path: aqi_data.csv
+          retention-days: 30 # Adjust as needed
