@@ -113,7 +113,7 @@ def save_list_to_csv(formatted_data, output_file):
     # Write to CSV
     with open(output_file, 'a', newline='') as csvfile:
         writer = csv.writer(csvfile)
-        # writer.writerow(["Pollutant", "Concentration"])  # Write header
+        writer.writerow(["UTC time", "Pollutant", "Concentration"])  # Write header
         writer.writerows(formatted_data)
 
 
