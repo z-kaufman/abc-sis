@@ -25,8 +25,8 @@ jobs:
           uv run aqi_scraper.py
       - name: Commit & Push Changes
         run: |
-          git config --global user.name 'vtnate'
-          git config --global user.email 'nathan.moore@nrel.gov'
+          git config --global user.name {{ secrets.USERNAME }}
+          git config --global user.email {{ secrets.NATE_EMAIL }}
           git add aqi_data.csv
           git commit -m "Append new content to file"
           git push
