@@ -6,6 +6,10 @@ on:
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
     # Run at minute 2 of every hour of every day
     - cron: "2 * * * *"
+
+permissions:
+  contents: write # Grants write access to repository contents
+
 jobs:
   scrape-website:
     runs-on: "ubuntu-latest"
@@ -25,8 +29,8 @@ jobs:
           uv run aqi_scraper.py
       - name: Commit & Push Changes
         run: |
-          git config --global user.name {{ secrets.USERNAME }}
-          git config --global user.email {{ secrets.ADMIN_EMAIL }}
+          git config --global user.name 'Github Actions'
+          git config --global user.email 'action@github.com'
           git add aqi_data.csv
           git commit -m "Append new content to file"
           git push
