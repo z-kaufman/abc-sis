@@ -7,7 +7,7 @@ on:
     # Run at minute 2 of every hour of every day
     - cron: "2 * * * *"
 jobs:
-  build:
+  scrape-website:
     runs-on: "ubuntu-latest"
 
     steps:
@@ -23,9 +23,16 @@ jobs:
       - name: Run the script
         run: |
           uv run aqi_scraper.py
+      - name: Commit & Push Changes
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git add aqi_data.csv
+          git commit -m "Append new content to file"
+          git push
       - name: Upload data file
         uses: actions/upload-artifact@v3
         with:
           name: AQI-data
           path: aqi_data.csv
-          retention-days: 30 # Adjust as needed
+          retention-days: 90 # Adjust as needed
