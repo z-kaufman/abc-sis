@@ -1,6 +1,7 @@
 import csv
 import logging
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import httpx
 from bs4 import BeautifulSoup
@@ -8,6 +9,9 @@ from bs4 import BeautifulSoup
 _log = logging.getLogger(__name__)
 
 data_type = 'list'
+MOUNTAIN_TIMEZONE = ZoneInfo("America/Denver")
+
+url = "https://www.iqair.com/us/usa/utah/salt-lake-city"
 
 
 def get_robots_txt(url):
@@ -113,7 +117,7 @@ def save_list_to_csv(formatted_data, output_file):
     # Write to CSV
     with open(output_file, 'a', newline='') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(["UTC time", "Pollutant", "Concentration"])  # Write header
+        writer.writerow(["Mountain time", "Pollutant", "Concentration"])  # Write header
         writer.writerows(formatted_data)
 
 
@@ -126,16 +130,14 @@ def organize_for_csv(input_list):
     paired_data = list(zip(input_list[0::2], input_list[1::2]))
 
     # Format the datetime to include only up to the hour
-    formatted_datetime = datetime.now().strftime("%Y-%m-%d %H:00:00")
+    mountain_time = datetime.now(MOUNTAIN_TIMEZONE)
+    formatted_datetime = mountain_time.strftime("%Y-%m-%d %H:00:00")
 
     # Adding the current datetime to each tuple
     formatted_data = [(formatted_datetime, x[0], x[1]) for x in paired_data]
 
     return formatted_data
 
-
-# URL of the website you want to scrape
-url = "https://www.iqair.com/us/usa/utah/salt-lake-city"
 
 # Call the scraping function
 scraped_data = scrape_website(url, data_type)
