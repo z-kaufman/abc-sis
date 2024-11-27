@@ -42,11 +42,12 @@ def scrape_website(url: str, data_type: str) -> list | str:
 
         if data is not None:
             # End at the check-mark, no matter how much text we scooped up
-            data = data.split("✓")[0]
+            data = data.split("✓")[0]  # This was once necessary, now isn't as of 2024-11-27
+            data = data.split("!")[0]
 
             # Separate the data into our desired bits
             data_as_list = data.split()
-            data_as_list = [x.split("!")[0] for x in data_as_list[1:]]
+            data_as_list = data_as_list[1:]
 
             # split out values from units
             more_split_data_list = []
@@ -62,7 +63,8 @@ def scrape_website(url: str, data_type: str) -> list | str:
                     if elem[0].isupper():
                         metrics_list.append(elem)
                     else:
-                        raise SystemExit(f"I don't know what this is: {elem}")
+                        print(f"I don't know what this is: {elem}")
+                        continue
         else:
             raise SystemExit("No text returned from website")
         return metrics_list, values_list
@@ -138,4 +140,4 @@ elif data_type == 'list':
     # Call the scraping function
     metrics_list, values_list = scrape_website(url, data_type)
     formatted_metrics, formatted_values = organize_for_csv(metrics_list, values_list)
-    save_list_to_csv(formatted_metrics, formatted_values, "aqi_data_v2.csv")
+    save_list_to_csv(formatted_metrics, formatted_values, "aqi_data_v3.csv")
