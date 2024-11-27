@@ -31,6 +31,6 @@ jobs:
         run: |
           git config --global user.name 'Github Actions'
           git config --global user.email 'action@github.com'
-          git add aqi_data_v2.csv
+          git add aqi_data_v3.csv
           git commit -m "Append new content to file"
           git push
