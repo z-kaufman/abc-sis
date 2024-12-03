@@ -5,7 +5,7 @@ Repository for ABC-SIS project work
 
 Clone the repository via git:
 
-```
+```terminal
 git clone https://github.com/betsrg/ghedesigner
 ```
 
