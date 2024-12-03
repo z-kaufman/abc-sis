@@ -21,9 +21,7 @@ jobs:
         with:
           python-version: "3.13"
       - name: Use specific version of Uv
-        uses: astral-sh/setup-uv@v3
-        with:
-          version: "0.5.2"
+        uses: astral-sh/setup-uv@v4
       - name: Run the script
         run: |
           uv run aqi_scraper.py
@@ -31,6 +29,6 @@ jobs:
         run: |
           git config --global user.name 'Github Actions'
           git config --global user.email 'action@github.com'
-          git add aqi_data_v3.csv
+          git add aqi_data_v4.csv
           git commit -m "Append new content to file"
           git push
