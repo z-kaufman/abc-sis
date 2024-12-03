@@ -125,7 +125,15 @@ def organize_for_csv(metrics_list, values_list):
     mountain_time = datetime.now(MOUNTAIN_TIMEZONE)
     formatted_datetime = str(mountain_time.strftime("%Y-%m-%d %H:00:00"))
 
+    # Add datetime (to hour precision) at beginning of data list
     values_list.insert(0, formatted_datetime)
+
+    # Add 0.0 for any entries that aren't provided by the website'
+    num_desired_data_items = 7
+    while len(values_list) < num_desired_data_items:
+        values_list.append(0.0)
+
+    # Format column headers
     metrics_list = [f"{x}{UNITS}" for x in metrics_list]
     metrics_list.insert(0, "Timestamp")
 
@@ -140,4 +148,4 @@ elif data_type == 'list':
     # Call the scraping function
     metrics_list, values_list = scrape_website(url, data_type)
     formatted_metrics, formatted_values = organize_for_csv(metrics_list, values_list)
-    save_list_to_csv(formatted_metrics, formatted_values, "aqi_data_v3.csv")
+    save_list_to_csv(formatted_metrics, formatted_values, "aqi_data_v4.csv")
