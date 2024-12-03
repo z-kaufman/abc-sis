@@ -8,7 +8,7 @@ on:
     - cron: "2 * * * *"
 
 permissions:
-  contents: write # Grants write access to repository contents
+  contents: write # Grants write access to repository contents. Required for automatic updating of data file
 
 jobs:
   scrape-website:
