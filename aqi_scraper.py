@@ -128,7 +128,7 @@ def organize_for_csv(metrics_list, values_list):
         values_list.append(0.0)
 
     # Format column headers
-    metrics_list = [f"{x}{UNITS}" for x in metrics_list]
+    metrics_list = [f"{x} {UNITS}" for x in metrics_list]
     metrics_list.insert(0, "Timestamp")
 
     return metrics_list, values_list
