@@ -1,5 +1,6 @@
 import csv
 import logging
+import re
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -38,33 +39,26 @@ def scrape_website(url: str, data_type: str) -> list | str:
     soup = BeautifulSoup(response.content, 'html.parser')
 
     if data_type == 'list':
-        data = find_substring_and_context(soup.get_text(), 'PollutantsConcentration')
+        data = find_substring_and_context(soup.get_text(), 'PM2.5Particulate')
 
         if data is not None:
-            # End at the check-mark, no matter how much text we scooped up
-            data = data.split("✓")[0]  # This was once necessary, now isn't as of 2024-11-27
-            data = data.split("!")[0]
+            data = data.split(f" {UNITS}")
+            # Remove any extra data beyond the last instance of the split
+            del data[6:]
 
-            # Separate the data into our desired bits
-            data_as_list = data.split()
-            data_as_list = data_as_list[1:]
+            # Function to extract metrics
+            # This gives me the creeps. It's so vulnerable to any change of the IQAir website
+            def extract_metric(string):
+                # Find the position where the first lowercase letter appears after an uppercase sequence
+                # regex written by Perplexity.ai
+                match = re.search(r"([A-Z₃₂]+(?:\d*\.?\d*)?)([A-Z][a-z])", string)
+                if match:
+                    return match.group(1)
+                return None
 
-            # split out values from units
-            more_split_data_list = []
-            for elem in data_as_list:
-                more_split_data_list.append(elem.split("\u00b5")[0])
-
-            metrics_list = []  # ['PM2.5', 'PM10', 'O₃', 'NO₂', 'SO₂', 'CO']
-            values_list = []  # [4.5, 16.0, 56.0, 25.5, 0.4, 229.0]
-            for elem in more_split_data_list:
-                try:
-                    values_list.append(float(elem))
-                except ValueError:
-                    if elem[0].isupper():
-                        metrics_list.append(elem)
-                    else:
-                        print(f"I don't know what this is: {elem}")
-                        continue
+            # Extract metrics from data string using the function
+            metrics_list = [extract_metric(item) for item in data]
+            values_list = [float(re.search(r"([\d,.]+)$", item).group(1).replace(',', '')) for item in data]
         else:
             raise SystemExit("No text returned from website")
         return metrics_list, values_list
@@ -75,7 +69,7 @@ def scrape_website(url: str, data_type: str) -> list | str:
         raise SystemExit("Incorrect or no desired data type provided. Must be either 'raw' or 'list'.")
 
 
-def find_substring_and_context(long_string: str, substring: str, context_length: int = 100) -> str | None:
+def find_substring_and_context(long_string: str, substring: str, context_length: int = 200) -> str | None:
     """This is suuuuuuuper hacky and brittle! However, IQAir has not let us use their API for research purposes,
     so we are scraping their website like this as a workaround.
 
@@ -148,4 +142,4 @@ elif data_type == 'list':
     # Call the scraping function
     metrics_list, values_list = scrape_website(url, data_type)
     formatted_metrics, formatted_values = organize_for_csv(metrics_list, values_list)
-    save_list_to_csv(formatted_metrics, formatted_values, "aqi_data_v4.csv")
+    save_list_to_csv(formatted_metrics, formatted_values, "aqi_data_v5.csv")
