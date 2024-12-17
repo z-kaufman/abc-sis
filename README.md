@@ -6,7 +6,7 @@ Repository for ABC-SIS project work
 Clone the repository via git:
 
 ```terminal
-git clone https://github.com/betsrg/ghedesigner
+git clone https://github.com/vtnate/abc-sis.git
 ```
 
 - [Uv](https://docs.astral.sh/uv/) is used to manage the project & dependencies (and may be used to [manage Python](https://docs.astral.sh/uv/guides/install-python/) if you want). After cloning, ensure you have
@@ -27,6 +27,6 @@ Using the API is strongly preferred over this scraper, but is currently unfeasab
 
 An example of the output is:
 
-|Timestamp          |PM2.5µg/m³|PM10µg/m³|O₃µg/m³|NO₂µg/m³|SO₂µg/m³|COµg/m³|
-|:-----------------:|:--------:|:-------:|:-----:|:------:|:------:|:-----:|
-|2024-11-27 08:00:00|6.8       |5.0      |37.0   |39.5    |0.5     |229.0  |
+|Timestamp          |PM2.5 µg/m³|PM10 µg/m³|O₃ µg/m³|NO₂ µg/m³|SO₂ µg/m³|CO µg/m³|
+|:-----------------:|:---------:|:--------:|:------:|:-------:|:-------:|:------:|
+|2024-11-27 08:00:00|6.8        |5.0       |37.0    |39.5     |0.5      |229.0   |
