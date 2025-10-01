@@ -34,20 +34,37 @@ def get_data(url):
     # Create a BeautifulSoup object to parse the HTML content
     soup = BeautifulSoup(response.content, 'html.parser')
 
-    # table = soup.find('table', {'class': 'two-cols'})
-    table = soup.find_all('table')[2]
+
+    # Use a web inspector to find the right table
+    table = soup.find('table', title="Air pollutants")
+    if not table:
+        raise ValueError("Could not find the 'Air pollutants' table on the page.")
+
     rows = table.find_all('tr')
 
     metrics_list = []
     values_list = []
     for row in rows:
-        metric = row.find(class_="card-wrapper-info__title")
-        value = row.find(class_="measurement-wrapper__value")
+        metric = row.find(class_="lgsm:base-text font-body-s text-gray-900").text.strip()
+        value = row.find(class_="font-body-m-medium text-gray-900").text.strip()
+
+        if metric.startswith('O'):
+            metric = metric[:2]
+        elif metric.startswith('PM2.5'):
+            metric = metric[:5]
+        elif metric.startswith('PM10'):
+            metric = metric[:4]
+        elif metric.startswith(('NO', 'SO')):
+            metric = metric[:3]
+        elif metric.startswith('CO'):
+            metric = metric[:2]
+
+        print(f"Metric: {metric}, Value: {value}")
 
         if value:
             # _log.debug(value.text.strip())
-            values_list.append(value.text.strip())
-            metrics_list.append(metric.text.strip())
+            values_list.append(value)
+            metrics_list.append(metric)
 
     return metrics_list, values_list
 
