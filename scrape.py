@@ -16,7 +16,7 @@ _log = logging.getLogger(__name__)
 URL = "https://www.iqair.com/us/usa/utah/salt-lake-city"
 UNITS = "µg/m³"
 MOUNTAIN_TIMEZONE = ZoneInfo("America/Denver")
-OUTPUT_FILE_NAME = "aqi_data_v6.csv"
+OUTPUT_FILE_NAME = "aqi_data_v7.csv"
 
 
 def main():
