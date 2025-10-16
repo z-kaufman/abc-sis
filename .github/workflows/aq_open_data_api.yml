@@ -5,7 +5,7 @@ on:
   schedule:
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
     # Run at minute 2 of every hour of every day
-    - cron: "20 * * * *"
+    - cron: "25 * * * *"
 
 permissions:
   contents: write # Grants write access to repository contents. Required for automatic updating of data file
