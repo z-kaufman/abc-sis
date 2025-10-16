@@ -2,7 +2,7 @@ name: Run Air Quality API Notebook
 
 on:
   schedule:
-    - cron: '35 * * * *'  # Runs every hour
+    - cron: '2 * * * *'  # Runs every hour
   workflow_dispatch:      # Allows manual run from GitHub Actions tab
 
 jobs:
