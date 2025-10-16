@@ -1,0 +1,34 @@
+name: Get AQ Open data
+
+on:
+  workflow_dispatch:
+  schedule:
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    # Run at minute 2 of every hour of every day
+    - cron: "20 * * * *"
+
+permissions:
+  contents: write # Grants write access to repository contents. Required for automatic updating of data file
+
+jobs:
+  call-api:
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install Uv
+        uses: astral-sh/setup-uv@v4
+      - name: Run the script
+        run: |
+          uv run AirQualityOpenData_API-to-csv.ipynb
+      - name: Commit & Push Changes
+        run: |
+          git config --global user.name 'Github Actions'
+          git config --global user.email 'action@github.com'
+          git add AirQualityOpenData_API_dump.csv
+          git commit -m "Append new content to file"
+          git push
