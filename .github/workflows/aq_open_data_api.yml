@@ -1,47 +1,36 @@
-name: Get AQ Open data
+name: Run Air Quality API Notebook
 
 on:
-  workflow_dispatch:
   schedule:
-    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
-    # Run at minute 2 of every hour of every day
-    - cron: "59 * * * *"
-
-permissions:
-  contents: write # Grants write access to repository contents. Required for automatic updating of data file
+    - cron: '25 * * * *'  # Runs every hour
+  workflow_dispatch:      # Allows manual run from GitHub Actions tab
 
 jobs:
-  call-api:
-    runs-on: "ubuntu-latest"
+  run-notebook:
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.13"
-          cache: 'pip'
+          python-version: '3.13'
+
       - name: Install dependencies
         run: |
-          pip install jupyter lab
-          pip install nbclient
-          pip install pandas
-          pip install matplotlib
-          pip install requests
-          pip install json
-          pip install csv
-          pip install datetime
-          pip install numpy
-          pip install matplotlib.dates
-      - name: Install Uv
-        uses: astral-sh/setup-uv@v4
-      - name: Run the script
+          python -m pip install --upgrade pip
+          pip install jupyter nbconvert pandas requests
+
+      - name: Run Jupyter Notebook
         run: |
-          uv run AirQualityOpenData_API-to-csv.ipynb
-      - name: Commit & Push Changes
+          jupyter nbconvert --to notebook --execute "AirQualityOpenData_API-to-csv.ipynb" --output "AirQualityOpenData_API-to-csv-output.ipynb"
+
+      - name: Commit and push updated CSV
         run: |
-          git config --global user.name 'Github Actions'
-          git config --global user.email 'action@github.com'
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add AirQualityOpenData_API_dump.csv
-          git commit -m "Append new content to file"
+          git commit -m "Auto-update air quality data [skip ci]" || echo "No changes to commit"
           git push
