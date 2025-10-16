@@ -5,7 +5,7 @@ on:
   schedule:
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
     # Run at minute 2 of every hour of every day
-    - cron: "25 * * * *"
+    - cron: "35 * * * *"
 
 permissions:
   contents: write # Grants write access to repository contents. Required for automatic updating of data file
@@ -24,7 +24,7 @@ jobs:
         uses: astral-sh/setup-uv@v4
       - name: Run the script
         run: |
-          uv run AirQualityOpenData_API-to-csv.ipynb
+          uv run AirQualityOpenData_API-to-csv.py
       - name: Commit & Push Changes
         run: |
           git config --global user.name 'Github Actions'
