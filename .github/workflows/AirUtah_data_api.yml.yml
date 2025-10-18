@@ -1,0 +1,37 @@
+name: Run Air Utah Air Quality API Notebook
+
+on:
+  schedule:
+    - cron: '1,15,30,45 * * * *'  # Runs 4x every hour
+  workflow_dispatch:      # Allows manual run from GitHub Actions tab
+
+jobs:
+  run-notebook:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install jupyter nbconvert pandas requests
+          pip install matplotlib
+
+      - name: Run Jupyter Notebook
+        run: |
+          jupyter nbconvert --to notebook --execute "air.utah.gov_API-to-csv.ipynb" --output "air.utah.gov_API-to-csv-output.ipynb"
+
+      - name: Commit and push updated CSV
+        run: |
+          git config --global user.name 'Github Actions'
+          git config --global user.email 'action@github.com'
+          git add AirUtah_API_dump.csv
+          git commit -m "Auto-update pm2.5 data [skip ci]" || echo "No changes to commit"
+          git push
