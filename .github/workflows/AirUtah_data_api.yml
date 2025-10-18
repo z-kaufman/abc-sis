@@ -24,6 +24,7 @@ jobs:
           pip install jupyter nbconvert pandas requests
           pip install matplotlib
           pip install feedparser
+          pip install re
 
       - name: Run Jupyter Notebook
         run: |
