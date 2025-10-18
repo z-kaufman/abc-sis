@@ -23,6 +23,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install jupyter nbconvert pandas requests
           pip install matplotlib
+          pip install feedparser
 
       - name: Run Jupyter Notebook
         run: |
