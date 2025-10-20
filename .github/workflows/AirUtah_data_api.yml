@@ -2,7 +2,7 @@ name: Run Air Utah Air Quality API Notebook
 
 on:
   schedule:
-    - cron: '1,15,30,45 * * * *'  # Runs 4x every hour
+    - cron: '8,23,38,53 * * * *'  # Runs 4x every hour
   workflow_dispatch:      # Allows manual run from GitHub Actions tab
 
 jobs:
