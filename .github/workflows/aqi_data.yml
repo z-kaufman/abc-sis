@@ -2,10 +2,10 @@ name: Get AQI data
 
 on:
   workflow_dispatch:
-  schedule:
+  # schedule:
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
     # Run at minute 2 of every hour of every day
-    # - cron: "2 * * * *"
+    - cron: "2 * * * *"
 
 permissions:
   contents: write # Grants write access to repository contents. Required for automatic updating of data file
