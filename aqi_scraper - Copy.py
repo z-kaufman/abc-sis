@@ -39,7 +39,7 @@ def scrape_website(url: str, data_type: str) -> list | str:
     soup = BeautifulSoup(response.content, 'html.parser')
 
     if data_type == 'list':
-        data = find_substring_and_context(soup.get_text(), 'PM2.5Particulate')
+        data = find_substring_and_context(soup.get_text(), 'PM2.5Fine')
 
         if data is not None:
             data = data.split(f" {UNITS}")
