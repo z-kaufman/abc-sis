@@ -19,7 +19,14 @@ git clone https://github.com/vtnate/abc-sis.git
 
 ## AQI scraper Usage
 
-There is a GitHub Actions workflow that runs the `scrape.py` script every hour. It outputs an `aqi_data...` versioned csv file which is automatically updated in this repo by the Action.
+There are 3 sources being scraped for air quality data:
+1. IQAir
+2. Air Utah
+3. Air Quality Open Data
+
+Air Utah and Air Quality Open Data have APIs, while IQAir uses a scraper.
+
+There is a GitHub Actions workflow that runs the `scrape.py` script every hour for the IQAir website. It outputs an `aqi_data...` versioned csv file which is automatically updated in this repo by the Action.
 
 The script can be run by hand with `uv run scrape.py`
 
@@ -32,3 +39,6 @@ An example of the output is:
 |      Timestamp      | PM2.5 µg/m³ | PM10 µg/m³ | O₃ µg/m³ | NO₂ µg/m³ | SO₂ µg/m³ | CO µg/m³ |
 | :-----------------: | :---------: | :--------: | :------: | :-------: | :-------: | :------: |
 | 2024-11-27 08:00:00 |     6.8     |    5.0     |   37.0   |   39.5    |    0.5    |  229.0   |
+
+Air Utah (air.utah.gov) uses an RSS feed for Salt Lake City. This is likely the most reliable source of PM-2.5 data because it's an actual PM-2.5 measurement and is more reliable than the IQAir scraper.
+Air Quality Open Data's PM-2.5 number is actually the "Now Cast" (https://en.wikipedia.org/wiki/NowCast_(air_quality_index)), which is calculated based on the last 12 hours of PM2.5 concentrations, weighting recent concentrations more heavily. It is not really possible to back-calculate PM2.5 concentration from Now Cast values because there are so many inputs (12 hours' worth).
