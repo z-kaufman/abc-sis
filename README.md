@@ -40,5 +40,7 @@ An example of the output is:
 | :-----------------: | :---------: | :--------: | :------: | :-------: | :-------: | :------: |
 | 2024-11-27 08:00:00 |     6.8     |    5.0     |   37.0   |   39.5    |    0.5    |  229.0   |
 
+Convert to MST where MDT data provided (3/9-11/2/2025 at 1am; 3/8/2026 at 2am onward) by subtracting 1/24.
+
 Air Utah (air.utah.gov) uses an RSS feed for Salt Lake City. This is likely the most reliable source of PM-2.5 data because it's an actual PM-2.5 measurement and is more reliable than the IQAir scraper.
 Air Quality Open Data's PM-2.5 number is actually the "Now Cast" (https://en.wikipedia.org/wiki/NowCast_(air_quality_index)), which is calculated based on the last 12 hours of PM2.5 concentrations, weighting recent concentrations more heavily. It is not really possible to back-calculate PM2.5 concentration from Now Cast values because there are so many inputs (12 hours' worth).
